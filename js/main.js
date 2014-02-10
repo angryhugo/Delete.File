@@ -1,29 +1,52 @@
-var fs = require('fs'),
-    path = require('path');
+$(function() {
+    var fs = require('fs'),
+        path = require('path');
 
-var dirname = process.execPath.substr(0, process.execPath.lastIndexOf('/')); //the path of 'nw' file
+    // var dirname = process.execPath.substr(0, process.execPath.lastIndexOf('/')); //the path of 'nw' file
 
-var FILE_PATH = path.join(dirname, '..', '..', 'Documents', 'node-webkit');
+    var $deleteBtn = $('#delete-btn');
+    var $filetypeInput = $('#input-filetype');
+    var $directoryInput = $('#input-directory');
+    var $totalCountAlert = $('#total-count-alert');
+    var $directoryErrorAlert = $('#directory-error-alert');
 
-var count = 0;
+    var count = 0;
 
-function deleteHelper(filePath, callback) {
-    var files = [];
-    if (fs.existsSync(filePath)) {
-        files = fs.readdirSync(filePath);
-        for (var i in files) {
-            var curPath = filePath + '/' + files[i];
-            if (fs.statSync(curPath).isDirectory()) {
-                arguments.callee(curPath);
-            } else if (path.extname(curPath) === '.test') {
-                count++;
-                fs.unlinkSync(curPath);
-                console.log(curPath);
+    function deleteHelper(filePath, filetype) {
+        var files = [];
+        if (fs.existsSync(filePath)) {
+            files = fs.readdirSync(filePath);
+            for (var i in files) {
+                var curPath = filePath + '/' + files[i];
+                if (fs.statSync(curPath).isDirectory()) {
+                    arguments.callee(curPath, filetype);
+                } else if (path.extname(curPath) === filetype) {
+                    count++;
+                    fs.unlinkSync(curPath);
+                    console.log(curPath);
+                }
             }
+            return true;
+        } else {
+            return false;
         }
-    }
-};
+    };
 
-deleteHelper(FILE_PATH);
+    $deleteBtn.on('click', function() {
+        $directoryErrorAlert.addClass('hide');
+        $totalCountAlert.addClass('hide');
+        var filePath = $.trim($directoryInput.val());
+        var filetype = $.trim($filetypeInput.val());
+        if (!deleteHelper(filePath, filetype)) {
+            $directoryErrorAlert.removeClass('hide');
+            $directoryInput.val('');
+        } else {
+            $totalCountAlert.html('total count:' + count)
+                .removeClass('hide');
+            $directoryInput.val('');
+            $filetypeInput.val('');
+            count = 0;
+        }
+    });
 
-$("#h-test").html("count:" + count);
+});

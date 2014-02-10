@@ -1,4 +1,11 @@
 {
-    "name": "nw-demo",
-    "main": "index.html"
+    "name": "delete *.file",
+    "description": " delete *.file recursively of the root directory",
+    "version": "0.1",
+    "main": "index.html",
+    "window": {
+        "toolbar": false,
+        "width": 600,
+        "height": 320
+    }
 }
