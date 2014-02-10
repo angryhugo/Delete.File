@@ -15,18 +15,23 @@ $(function() {
     function deleteHelper(filePath, filetype) {
         var files = [];
         if (fs.existsSync(filePath)) {
-            files = fs.readdirSync(filePath);
-            for (var i in files) {
-                var curPath = filePath + '/' + files[i];
-                if (fs.statSync(curPath).isDirectory()) {
-                    arguments.callee(curPath, filetype);
-                } else if (path.extname(curPath) === filetype) {
-                    count++;
-                    fs.unlinkSync(curPath);
-                    console.log(curPath);
+            try {
+                files = fs.readdirSync(filePath);
+                for (var i in files) {
+                    var curPath = filePath + '/' + files[i];
+                    if (fs.statSync(curPath).isDirectory()) {
+                        arguments.callee(curPath, filetype);
+                    } else if (path.extname(curPath) === filetype) {
+                        count++;
+                        fs.unlinkSync(curPath);
+                        console.log(curPath);
+                    }
                 }
+            } catch (e) {
+                console.log(e.name + ':' + e.message);
+            } finally {
+                return true;
             }
-            return true;
         } else {
             return false;
         }
