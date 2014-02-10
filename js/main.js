@@ -38,6 +38,7 @@ $(function() {
     };
 
     $deleteBtn.on('click', function() {
+        $deleteBtn.attr('disabled', true); //not work correctly
         $directoryErrorAlert.addClass('hide');
         $totalCountAlert.addClass('hide');
         var filePath = $.trim($directoryInput.val());
@@ -52,6 +53,7 @@ $(function() {
             $filetypeInput.val('');
             count = 0;
         }
+        $deleteBtn.attr('disabled', false);
     });
 
 });
