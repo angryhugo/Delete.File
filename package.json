@@ -4,8 +4,8 @@
     "version": "0.1",
     "main": "index.html",
     "window": {
-        // "toolbar": false,
+        "toolbar": false,
         "width": 600,
-        "height": 320
+        "height": 240
     }
 }
