@@ -9,9 +9,17 @@ $(function() {
     var $directoryInput = $('#input-directory');
     var $totalCountAlert = $('#total-count-alert');
     var $directoryErrorAlert = $('#directory-error-alert');
+    var $processModal = $('#process-modal');
+    var $alertMsg = $('#alert-msg');
+    var $closeModalBtn = $('#btn-close-modal');
+
+    var Message = {
+        INVALID_PATH: 'invalid directory!',
+        DELETE_SUCCESS: ' file(s) has been deleted!',
+        BEING_PROCESSED: 'Being processed...'
+    };
 
     var count = 0;
-    var _timer;
 
     function deleteHelper(filePath, filetype) {
         var files = [];
@@ -39,30 +47,25 @@ $(function() {
     };
 
     $deleteBtn.on('click', function() {
-        $deleteBtn.attr('disabled', true); //not work correctly
+        $alertMsg.html(Message.BEING_PROCESSED).css('color', 'black');
+        $closeModalBtn.hide();
+        $processModal.modal({
+            backdrop: "static"
+        });
         setTimeout(function() {
-            $directoryErrorAlert.addClass('hide');
-            $totalCountAlert.addClass('hide');
-            clearTimeout(_timer);
             var filePath = $.trim($directoryInput.val());
             var filetype = $.trim($filetypeInput.val());
             if (!deleteHelper(filePath, filetype)) {
-                $directoryErrorAlert.removeClass('hide');
-                _timer = setTimeout(function() {
-                    $directoryErrorAlert.addClass('hide');
-                }, 3000);
                 $directoryInput.val('');
+                $alertMsg.html(Message.INVALID_PATH).css('color', 'red');
+                $closeModalBtn.show();
             } else {
-                $totalCountAlert.html('total count:' + count)
-                    .removeClass('hide');
-                _timer = setTimeout(function() {
-                    $totalCountAlert.addClass('hide');
-                }, 3000);
                 $directoryInput.val('');
                 $filetypeInput.val('');
+                $alertMsg.html(count + Message.DELETE_SUCCESS).css('color', 'green');
+                $closeModalBtn.show();
                 count = 0;
             }
-            $deleteBtn.attr('disabled', false);
         }, 500);
     });
 
