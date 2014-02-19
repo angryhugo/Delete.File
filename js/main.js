@@ -40,28 +40,30 @@ $(function() {
 
     $deleteBtn.on('click', function() {
         $deleteBtn.attr('disabled', true); //not work correctly
-        $directoryErrorAlert.addClass('hide');
-        $totalCountAlert.addClass('hide');
-        clearTimeout(_timer);
-        var filePath = $.trim($directoryInput.val());
-        var filetype = $.trim($filetypeInput.val());
-        if (!deleteHelper(filePath, filetype)) {
-            $directoryErrorAlert.removeClass('hide');
-            _timer = setTimeout(function() {
-                $directoryErrorAlert.addClass('hide');
-            }, 3000);
-            $directoryInput.val('');
-        } else {
-            $totalCountAlert.html('total count:' + count)
-                .removeClass('hide');
-            _timer = setTimeout(function() {
-                $totalCountAlert.addClass('hide');
-            }, 3000);
-            $directoryInput.val('');
-            $filetypeInput.val('');
-            count = 0;
-        }
-        $deleteBtn.attr('disabled', false);
+        setTimeout(function() {
+            $directoryErrorAlert.addClass('hide');
+            $totalCountAlert.addClass('hide');
+            clearTimeout(_timer);
+            var filePath = $.trim($directoryInput.val());
+            var filetype = $.trim($filetypeInput.val());
+            if (!deleteHelper(filePath, filetype)) {
+                $directoryErrorAlert.removeClass('hide');
+                _timer = setTimeout(function() {
+                    $directoryErrorAlert.addClass('hide');
+                }, 3000);
+                $directoryInput.val('');
+            } else {
+                $totalCountAlert.html('total count:' + count)
+                    .removeClass('hide');
+                _timer = setTimeout(function() {
+                    $totalCountAlert.addClass('hide');
+                }, 3000);
+                $directoryInput.val('');
+                $filetypeInput.val('');
+                count = 0;
+            }
+            $deleteBtn.attr('disabled', false);
+        }, 500);
     });
 
 });
