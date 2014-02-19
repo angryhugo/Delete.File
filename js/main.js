@@ -14,6 +14,9 @@ $(function() {
     var $closeModalBtn = $('#btn-close-modal');
 
     var Message = {
+        DELETE_CONFIRM1: 'Are you sure to delete *',
+        DELETE_CONFIRM2: ' in ',
+        INPUT_ERROR: '"Type" and "Directory" could not be empty!',
         INVALID_PATH: 'invalid directory!',
         DELETE_SUCCESS: ' file(s) has been deleted!',
         BEING_PROCESSED: 'Being processed...'
@@ -47,26 +50,34 @@ $(function() {
     };
 
     $deleteBtn.on('click', function() {
-        $alertMsg.html(Message.BEING_PROCESSED).css('color', 'black');
-        $closeModalBtn.hide();
-        $processModal.modal({
-            backdrop: "static"
-        });
-        setTimeout(function() {
-            var filePath = $.trim($directoryInput.val());
-            var filetype = $.trim($filetypeInput.val());
-            if (!deleteHelper(filePath, filetype)) {
-                $directoryInput.val('');
-                $alertMsg.html(Message.INVALID_PATH).css('color', 'red');
-                $closeModalBtn.show();
-            } else {
-                $directoryInput.val('');
-                $filetypeInput.val('');
-                $alertMsg.html(count + Message.DELETE_SUCCESS).css('color', 'green');
-                $closeModalBtn.show();
-                count = 0;
-            }
-        }, 500);
+        var filetype = $.trim($filetypeInput.val());
+        var filePath = $.trim($directoryInput.val());
+        if (filetype === '' || filePath === '') {
+            bootbox.alert(Message.INPUT_ERROR);
+        } else {
+            bootbox.confirm(Message.DELETE_CONFIRM1 + filetype + Message.DELETE_CONFIRM2, function(result) {
+                if (result) {
+                    $alertMsg.html(Message.BEING_PROCESSED).css('color', 'black');
+                    $closeModalBtn.hide();
+                    $processModal.modal({
+                        backdrop: "static"
+                    });
+                    setTimeout(function() {
+                        if (!deleteHelper(filePath, filetype)) {
+                            $directoryInput.val('');
+                            $alertMsg.html(Message.INVALID_PATH).css('color', 'red');
+                            $closeModalBtn.show();
+                        } else {
+                            $directoryInput.val('');
+                            $filetypeInput.val('');
+                            $alertMsg.html(count + Message.DELETE_SUCCESS).css('color', 'green');
+                            $closeModalBtn.show();
+                            count = 0;
+                        }
+                    }, 500);
+                }
+            });
+        }
     });
 
 });
