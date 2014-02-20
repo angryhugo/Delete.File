@@ -5,7 +5,7 @@ $(function() {
     // var dirname = process.execPath.substr(0, process.execPath.lastIndexOf('/')); //the path of 'nw' file
 
     var $deleteBtn = $('#delete-btn');
-    var $filetypeInput = $('#input-filetype');
+    var $extNameInput = $('#input-extname');
     var $directoryInput = $('#input-directory');
     var $totalCountAlert = $('#total-count-alert');
     var $directoryErrorAlert = $('#directory-error-alert');
@@ -25,16 +25,16 @@ $(function() {
 
     var count = 0;
 
-    function deleteHelper(filePath, filetype) {
+    function deleteHelper(directory, extName) {
         var files = [];
-        if (fs.existsSync(filePath)) {
+        if (fs.existsSync(directory)) {
             try {
-                files = fs.readdirSync(filePath);
+                files = fs.readdirSync(directory);
                 for (var i in files) {
-                    var curPath = filePath + '/' + files[i];
+                    var curPath = directory + '/' + files[i];
                     if (fs.statSync(curPath).isDirectory()) {
-                        arguments.callee(curPath, filetype);
-                    } else if (path.extname(curPath) === filetype) {
+                        arguments.callee(curPath, extName);
+                    } else if (path.extname(curPath) === extName) {
                         count++;
                         fs.unlinkSync(curPath);
                         console.log(curPath);
@@ -51,12 +51,12 @@ $(function() {
     };
 
     $deleteBtn.on('click', function() {
-        var filetype = $.trim($filetypeInput.val());
-        var filePath = $.trim($directoryInput.val());
-        if (filetype === '' || filePath === '') {
+        var extName = $.trim($extNameInput.val());
+        var directory = $.trim($directoryInput.val());
+        if (extName === '' || directory === '') {
             bootbox.alert(Message.INPUT_ERROR);
         } else {
-            bootbox.confirm(Message.DELETE_CONFIRM1 + filetype + Message.DELETE_CONFIRM2 + filePath + Message.DELETE_CONFIRM3, function(result) {
+            bootbox.confirm(Message.DELETE_CONFIRM1 + extName + Message.DELETE_CONFIRM2 + directory + Message.DELETE_CONFIRM3, function(result) {
                 if (result) {
                     $alertMsg.html(Message.BEING_PROCESSED)
                         .css('color', 'black');
@@ -65,14 +65,14 @@ $(function() {
                         backdrop: "static"
                     });
                     setTimeout(function() {
-                        if (!deleteHelper(filePath, filetype)) {
+                        if (!deleteHelper(directory, extName)) {
                             $directoryInput.val('');
                             $alertMsg.html(Message.INVALID_PATH)
                                 .css('color', 'red');
                             $closeModalBtn.show();
                         } else {
                             $directoryInput.val('');
-                            $filetypeInput.val('');
+                            $extNameInput.val('');
                             $alertMsg.html(count + Message.DELETE_SUCCESS)
                                 .css('color', 'green');
                             $closeModalBtn.show();
